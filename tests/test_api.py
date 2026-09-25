@@ -93,5 +93,78 @@ class TestThyroidAPI(unittest.TestCase):
         print(f"[PASS] test_05_explain_endpoint: {res_data['total_counterfactuals_found']} counterfactuals generated.")
         print(f"       Disclaimer: {res_data['explanation_disclaimer'][:65]}...")
 
+    def test_06_frontend_static_serving(self):
+        """Verifies frontend HTML, CSS, and JavaScript are served correctly."""
+        res_html = self.client.get("/")
+        self.assertEqual(res_html.status_code, 200)
+        self.assertIn(b"ThyroCare XAI", res_html.data)
+
+        res_css = self.client.get("/styles.css")
+        self.assertEqual(res_css.status_code, 200)
+        self.assertIn(b":root", res_css.data)
+
+        res_js = self.client.get("/app.js")
+        self.assertEqual(res_js.status_code, 200)
+        self.assertIn(b"DOMContentLoaded", res_js.data)
+        print("[PASS] test_06_frontend_static_serving: index.html, styles.css, app.js verified.")
+
+    def test_07_admin_dataset_info(self):
+        """Verifies Module 1: Upload / Inspect dataset endpoint."""
+        res = self.client.get("/api/admin/dataset-info")
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()
+        self.assertEqual(data["status"], "success")
+        self.assertEqual(data["total_rows"], 9172)
+        self.assertEqual(data["total_columns"], 32)
+        self.assertIn("preview", data)
+        self.assertEqual(len(data["preview"]), 5)
+        print("[PASS] test_07_admin_dataset_info: Dataset stats and preview verified.")
+
+    def test_08_admin_preprocess(self):
+        """Verifies Module 2: Preprocess dataset endpoint."""
+        res = self.client.post("/api/admin/preprocess")
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()
+        self.assertEqual(data["status"], "success")
+        self.assertEqual(data["raw_feature_count"], 29)
+        self.assertEqual(data["transformed_feature_count"], 55)
+        self.assertEqual(data["train_samples"], 7337)
+        self.assertEqual(data["test_samples"], 1835)
+        print("[PASS] test_08_admin_preprocess: Preprocessing pipeline (29 -> 55 features, 80/20 split) verified.")
+
+    def test_09_admin_train_logistic_regression(self):
+        """Verifies Module 3a: Apply Logistic Regression with real metrics."""
+        res = self.client.post("/api/admin/train", json={"algorithm": "logistic_regression"})
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()["data"]
+        self.assertEqual(data["algorithm"], "Logistic Regression")
+        self.assertGreater(data["metrics"]["accuracy"], 70.0)
+        self.assertGreater(data["metrics"]["roc_auc"], 0.75)
+        self.assertIn("confusion_matrix", data)
+        print(f"[PASS] test_09_admin_train_logistic_regression: LR Acc={data['metrics']['accuracy']}%, ROC={data['metrics']['roc_auc']}.")
+
+    def test_10_admin_train_random_forest(self):
+        """Verifies Module 3b: Apply Random Forest with real metrics."""
+        res = self.client.post("/api/admin/train", json={"algorithm": "random_forest"})
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()["data"]
+        self.assertEqual(data["algorithm"], "Random Forest Classifier")
+        self.assertGreater(data["metrics"]["accuracy"], 95.0)
+        self.assertGreater(data["metrics"]["roc_auc"], 0.99)
+        self.assertIn("confusion_matrix", data)
+        print(f"[PASS] test_10_admin_train_random_forest: RF Acc={data['metrics']['accuracy']}%, ROC={data['metrics']['roc_auc']}.")
+
+    def test_11_admin_comparison(self):
+        """Verifies Module 4: View Algorithm Comparison Graph endpoint."""
+        res = self.client.get("/api/admin/comparison")
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()["data"]
+        self.assertEqual(len(data["algorithms"]), 2)
+        names = [a["name"] for a in data["algorithms"]]
+        self.assertIn("Logistic Regression", names)
+        self.assertIn("Random Forest", names)
+        self.assertIn("conclusion", data)
+        print("[PASS] test_11_admin_comparison: Comparison data with real metrics verified.")
+
 if __name__ == "__main__":
     unittest.main()

@@ -22,14 +22,16 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 from backend.xai_service import XAIService, FEATURE_COLUMNS, NUMERICAL_COLS, CATEGORICAL_COLS
+from backend.admin_service import AdminService
 
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
 app = Flask(__name__, static_folder=FRONTEND_DIR)
 CORS(app)
 
-# Initialize service singleton on startup
+# Initialize service singletons on startup
 service = XAIService.get_instance(base_dir=BASE_DIR)
+admin_service = AdminService(base_dir=BASE_DIR)
 
 @app.route("/", methods=["GET"])
 def serve_index():
@@ -125,6 +127,76 @@ def explain():
             "data": result
         }), 200
 
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+# =====================================================================
+# ADMIN DASHBOARD MODULES
+# =====================================================================
+
+@app.route("/api/admin/dataset-info", methods=["GET"])
+@app.route("/api/admin/upload-dataset", methods=["POST"])
+def upload_dataset():
+    """
+    Module 1: Upload / Inspect Dataset.
+    Accepts an uploaded CSV file (multipart or raw text) or inspects current active dataset.
+    Never overwrites original thyroid0387_cleaned.csv.
+    """
+    try:
+        file_content = None
+        filename = None
+
+        if request.method == "POST":
+            if "file" in request.files:
+                uploaded_file = request.files["file"]
+                filename = uploaded_file.filename
+                file_content = uploaded_file.read()
+            elif request.is_json and "csv_data" in request.json:
+                file_content = request.json["csv_data"]
+                filename = request.json.get("filename", "uploaded_data.csv")
+
+        info = admin_service.get_dataset_info(file_content=file_content, filename=filename)
+        return jsonify(info), 200
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+@app.route("/api/admin/preprocess", methods=["POST"])
+def preprocess_data():
+    """
+    Module 2: Preprocess Dataset.
+    Executes median/mode imputation, standard scaling, one-hot encoding, and 80/20 train/test split.
+    """
+    try:
+        prep_summary = admin_service.preprocess_dataset()
+        return jsonify(prep_summary), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route("/api/admin/train", methods=["POST"])
+def train_model():
+    """
+    Module 3: Apply Algorithm.
+    Trains Logistic Regression or Random Forest in-memory and calculates real metrics.
+    Does NOT overwrite production model files.
+    """
+    try:
+        payload = request.get_json(silent=True) or {}
+        algorithm = payload.get("algorithm", "random_forest")
+        result = admin_service.train_algorithm(algorithm_name=algorithm)
+        return jsonify({"status": "success", "data": result}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route("/api/admin/comparison", methods=["GET"])
+def get_algorithm_comparison():
+    """
+    Module 4: View Algorithm Comparison Graph.
+    Returns calculated comparative performance metrics for Logistic Regression vs Random Forest.
+    """
+    try:
+        comparison = admin_service.get_comparison()
+        return jsonify({"status": "success", "data": comparison}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
