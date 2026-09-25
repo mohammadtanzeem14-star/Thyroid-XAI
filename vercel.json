@@ -1,9 +1,18 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/styles.css",
+      "destination": "/frontend/styles.css"
+    },
+    {
+      "source": "/app.js",
+      "destination": "/frontend/app.js"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/api/index.py"
+      "destination": "/frontend/index.html"
     }
   ]
 }

@@ -27,7 +27,13 @@ from backend.admin_service import AdminService
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
 app = Flask(__name__, static_folder=FRONTEND_DIR)
-CORS(app)
+CORS(
+    app,
+    resources={r"/api/*": {"origins": "*"}},
+    supports_credentials=False,
+    methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type"]
+)
 
 # Initialize service singletons on startup
 service = XAIService.get_instance(base_dir=BASE_DIR)
@@ -201,10 +207,11 @@ def get_algorithm_comparison():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == "__main__":
-    port = 5000
+    port = int(os.environ.get("PORT", 5000))
     print(f"\n=======================================================")
     print(f" Thyroid Disease Diagnosis & XAI Backend API Running")
-    print(f" Access URL: http://localhost:{port}")
+    print(f" Port: {port}")
+    print(f" Access URL: http://0.0.0.0:{port}")
     print(f" Health check: http://localhost:{port}/api/health")
     print(f"=======================================================\n")
     app.run(host="0.0.0.0", port=port, debug=False)

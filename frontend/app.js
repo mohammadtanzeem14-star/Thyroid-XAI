@@ -90,6 +90,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const comparisonBarsGrid = document.getElementById('comparisonBarsGrid');
   const comparisonTableBody = document.getElementById('comparisonTableBody');
   const comparisonConclusion = document.getElementById('comparisonConclusion');
+  const btnApiConfig = document.getElementById('btnApiConfig');
+
+  // =====================================================================
+  // API BASE URL CONFIGURATION
+  // Supports:
+  // - Local Flask development (http://localhost:5000 or same-origin)
+  // - Production Render backend URL (configured dynamically via localStorage or window.API_BASE_URL)
+  // =====================================================================
+  function getApiBaseUrl() {
+    if (typeof window.API_BASE_URL === 'string' && window.API_BASE_URL.trim() !== '') {
+      return window.API_BASE_URL.trim().replace(/\/+$/, '');
+    }
+    const stored = localStorage.getItem('API_BASE_URL');
+    if (stored && stored.trim() !== '') {
+      return stored.trim().replace(/\/+$/, '');
+    }
+    // Localhost fallback
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      if (window.location.port === '5000') return ''; // same-origin relative
+      return 'http://localhost:5000';
+    }
+    // Default for production deployment (relative if hosted together, or empty)
+    return '';
+  }
+
+  let API_BASE_URL = getApiBaseUrl();
 
   // Cache for loaded preset samples
   let cachedSamples = {};
@@ -140,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Initial Health Check & Metadata
   async function initSystem() {
     try {
-      const res = await fetch('/api/health');
+      const res = await fetch(`${API_BASE_URL}/api/health`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
 
@@ -163,14 +189,14 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('System health check error:', err);
       const dot = systemStatus.querySelector('.status-dot');
       dot.className = 'status-dot offline';
-      statusText.textContent = 'API Offline (Check backend server)';
+      statusText.textContent = API_BASE_URL ? `API Offline (${API_BASE_URL})` : 'API Offline (Check backend server)';
     }
   }
 
   // 2. Fetch Sample Patient Presets
   async function loadPresets() {
     try {
-      const res = await fetch('/api/samples');
+      const res = await fetch(`${API_BASE_URL}/api/samples`);
       if (!res.ok) return;
       const json = await res.json();
       if (json.status === 'success' && json.samples) {
@@ -395,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadingMsg.textContent = 'Random Forest evaluating 29 features & DiCE computing counterfactuals...';
 
     try {
-      const res = await fetch('/api/explain', {
+      const res = await fetch(`${API_BASE_URL}/api/explain`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -445,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadingMsg.textContent = 'Evaluating Random Forest ensemble without counterfactual generation...';
 
     try {
-      const res = await fetch('/api/predict', {
+      const res = await fetch(`${API_BASE_URL}/api/predict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -510,12 +536,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
-        res = await fetch('/api/admin/upload-dataset', {
+        res = await fetch(`${API_BASE_URL}/api/admin/upload-dataset`, {
           method: 'POST',
           body: formData
         });
       } else {
-        res = await fetch('/api/admin/dataset-info');
+        res = await fetch(`${API_BASE_URL}/api/admin/dataset-info`);
       }
 
       if (!res.ok) {
@@ -588,7 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnRunPreprocess.textContent = 'Processing Pipeline...';
 
     try {
-      const res = await fetch('/api/admin/preprocess', { method: 'POST' });
+      const res = await fetch(`${API_BASE_URL}/api/admin/preprocess`, { method: 'POST' });
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.message || 'Preprocessing failed');
@@ -620,7 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnTrainModel.textContent = 'Training & Evaluating in Memory...';
 
     try {
-      const res = await fetch('/api/admin/train', {
+      const res = await fetch(`${API_BASE_URL}/api/admin/train`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ algorithm: selectedAlgo })
@@ -666,7 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnLoadComparison.textContent = 'Calculating Comparison...';
 
     try {
-      const res = await fetch('/api/admin/comparison');
+      const res = await fetch(`${API_BASE_URL}/api/admin/comparison`);
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.message || 'Comparison failed');
@@ -747,6 +773,33 @@ document.addEventListener('DOMContentLoaded', () => {
       <strong>💡 Viva Analytical Conclusion:</strong><br>
       ${data.conclusion}
     `;
+  }
+
+  // =====================================================================
+  // RUNTIME API BASE URL CONFIGURATION DIALOG
+  // =====================================================================
+  if (btnApiConfig) {
+    btnApiConfig.addEventListener('click', () => {
+      const current = localStorage.getItem('API_BASE_URL') || API_BASE_URL || 'http://localhost:5000';
+      const input = prompt(
+        'Configure Backend API URL for Render / Cloud Deployment:\n\n' +
+        'Example for Render: https://thyroid-xai-api.onrender.com\n' +
+        'Example for Localhost: http://localhost:5000\n\n' +
+        'Current API URL:',
+        current
+      );
+      if (input !== null) {
+        const trimmed = input.trim().replace(/\/+$/, '');
+        if (trimmed) {
+          localStorage.setItem('API_BASE_URL', trimmed);
+        } else {
+          localStorage.removeItem('API_BASE_URL');
+        }
+        API_BASE_URL = getApiBaseUrl();
+        initSystem();
+        alert(`API Base URL updated to: ${API_BASE_URL || '(same-origin relative)'}`);
+      }
+    });
   }
 
   // Run initial setup
