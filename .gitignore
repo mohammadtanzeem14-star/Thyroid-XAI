@@ -1,0 +1,58 @@
+# ============================================
+# Git Ignore for Thyroid Disease XAI Project
+# ============================================
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+
+# Operating System & IDE Files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Local Temp / Editor Swap Files
+*.swp
+*.swo
+*~
+*.bak
+*.tmp
+
+# Vercel Build Output
+.vercel/
+
+# ============================================
+# IMPORTANT: DO NOT IGNORE ML MODELS & DATASET
+# The application requires these at runtime:
+# ============================================
+!model/random_forest_model.pkl
+!model/logistic_regression_model.pkl
+!model/preprocessor.pkl
+!model/*.csv
+!model/*.json
+!dataset/thyroid0387_cleaned.csv
