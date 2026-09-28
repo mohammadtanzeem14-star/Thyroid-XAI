@@ -1,0 +1,10 @@
+backend/
+model/
+dataset/
+tests/
+requirements.txt
+render.yaml
+venv/
+*.py
+*.pkl
+*.csv

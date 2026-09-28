@@ -96,23 +96,28 @@ document.addEventListener('DOMContentLoaded', () => {
   // API BASE URL CONFIGURATION
   // Supports:
   // - Local Flask development (http://localhost:5000 or same-origin)
-  // - Production Render backend URL (configured dynamically via localStorage or window.API_BASE_URL)
+  // - Production Render backend URL (https://thyroid-xai.onrender.com)
+  // - Dynamic runtime configuration via localStorage or window.API_BASE_URL
   // =====================================================================
+  const PRODUCTION_RENDER_BACKEND = 'https://thyroid-xai.onrender.com';
+
   function getApiBaseUrl() {
+    // 1. Explicit window override
     if (typeof window.API_BASE_URL === 'string' && window.API_BASE_URL.trim() !== '') {
       return window.API_BASE_URL.trim().replace(/\/+$/, '');
     }
+    // 2. User-configured custom URL in modal
     const stored = localStorage.getItem('API_BASE_URL');
     if (stored && stored.trim() !== '') {
       return stored.trim().replace(/\/+$/, '');
     }
-    // Localhost fallback
+    // 3. Localhost development fallback
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      if (window.location.port === '5000') return ''; // same-origin relative
-      return 'http://localhost:5000';
+      if (window.location.port === '5000') return ''; // same-origin relative when served directly by Flask backend
+      return 'http://localhost:5000'; // local static dev server hitting local Flask
     }
-    // Default for production deployment (relative if hosted together, or empty)
-    return '';
+    // 4. Default for production deployment on Vercel
+    return PRODUCTION_RENDER_BACKEND;
   }
 
   let API_BASE_URL = getApiBaseUrl();
@@ -780,11 +785,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // =====================================================================
   if (btnApiConfig) {
     btnApiConfig.addEventListener('click', () => {
-      const current = localStorage.getItem('API_BASE_URL') || API_BASE_URL || 'http://localhost:5000';
+      const current = localStorage.getItem('API_BASE_URL') || API_BASE_URL || PRODUCTION_RENDER_BACKEND;
       const input = prompt(
         'Configure Backend API URL for Render / Cloud Deployment:\n\n' +
-        'Example for Render: https://thyroid-xai-api.onrender.com\n' +
-        'Example for Localhost: http://localhost:5000\n\n' +
+        'Default Render API: https://thyroid-xai.onrender.com\n' +
+        'Localhost: http://localhost:5000\n\n' +
         'Current API URL:',
         current
       );
