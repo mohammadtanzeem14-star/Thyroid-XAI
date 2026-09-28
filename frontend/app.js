@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // DOM Elements - Tabs
   const tabClinical = document.getElementById('tabClinical');
+  const navXai = document.getElementById('navXai');
   const tabAdmin = document.getElementById('tabAdmin');
   const clinicalView = document.getElementById('clinicalView');
   const adminView = document.getElementById('adminView');
@@ -176,15 +177,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
 
       // Update System Status
-      const dot = systemStatus.querySelector('.status-dot');
-      dot.className = 'status-dot online';
-      statusText.textContent = `API Connected: ${data.model_name} (${data.metrics.accuracy})`;
+      const dot = systemStatus ? systemStatus.querySelector('.status-dot') : null;
+      if (dot) dot.className = 'status-dot online';
+      if (statusText) statusText.textContent = 'API Connected';
 
       // Update Metrics Strip
       if (metaModel) metaModel.textContent = data.model_name;
       if (metaAccuracy) metaAccuracy.textContent = data.metrics.accuracy;
       if (metaRoc) metaRoc.textContent = data.metrics.roc_auc;
-      if (metaPR) metaPR.textContent = `${data.metrics.precision} / ${data.metrics.recall}`;
+      if (metaPR) metaPR.textContent = `Precision ${data.metrics.precision} • Recall ${data.metrics.recall} • F1 ${data.metrics.f1_score}`;
       if (metaXai) metaXai.textContent = data.xai_engine;
 
       // Load Presets
@@ -192,9 +193,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch (err) {
       console.error('System health check error:', err);
-      const dot = systemStatus.querySelector('.status-dot');
-      dot.className = 'status-dot offline';
-      statusText.textContent = API_BASE_URL ? `API Offline (${API_BASE_URL})` : 'API Offline (Check backend server)';
+      const dot = systemStatus ? systemStatus.querySelector('.status-dot') : null;
+      if (dot) dot.className = 'status-dot offline';
+      if (statusText) statusText.textContent = 'API Offline';
     }
   }
 
@@ -300,13 +301,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Outcome Card Theme
     outcomeCard.className = isDisease ? 'outcome-card disease-detected' : 'outcome-card healthy-detected';
     outcomeBadge.className = isDisease ? 'outcome-badge disease' : 'outcome-badge healthy';
-    outcomeBadge.textContent = isDisease ? 'THYROID DISEASE DETECTED' : 'NORMAL / NO THYROID DISEASE';
+    outcomeBadge.textContent = isDisease ? 'THYROID DISEASE DETECTED' : 'NO DISEASE DETECTED';
 
     // Confidence & Progress Bar
     const conf = result.confidence_percent;
     confidenceValue.textContent = `${conf}%`;
     confidenceBar.style.width = `${conf}%`;
-    confidenceBar.className = isDisease ? 'progress-bar-fill disease' : 'progress-bar-fill healthy';
+    confidenceBar.className = isDisease ? 'gauge-fill disease' : 'gauge-fill healthy';
 
     // Probabilities
     const healthyPct = (result.probability_healthy * 100).toFixed(1);
@@ -363,10 +364,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <table class="diff-table">
             <thead>
               <tr>
-                <th>Feature</th>
+                <th>Clinical Feature</th>
                 <th>Patient's Value</th>
-                <th>Counterfactual Value</th>
-                <th>Model Decision Shift (Δ)</th>
+                <th>Counterfactual Target</th>
+                <th>Decision Shift (Δ)</th>
               </tr>
             </thead>
             <tbody>
@@ -394,12 +395,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const topChange = changes[0];
         const topLabel = FEATURE_LABELS[topChange.feature] || topChange.feature;
         const narrativeText = isOrigDisease
-          ? `The Random Forest model flips to <strong>Normal</strong> primarily if <strong>${topLabel}</strong> adjusts from ${topChange.original_value} to ${topChange.counterfactual_value}.`
-          : `The model alerts to <strong>Thyroid Disease</strong> if <strong>${topLabel}</strong> shifts from ${topChange.original_value} to ${topChange.counterfactual_value}.`;
+          ? `The Random Forest model flips to <strong>Normal</strong> if <strong>${topLabel}</strong> adjusts from ${topChange.original_value} to ${topChange.counterfactual_value}.`
+          : `The model alters prediction to <strong>Thyroid Disease</strong> if <strong>${topLabel}</strong> shifts from ${topChange.original_value} to ${topChange.counterfactual_value}.`;
 
         tableHtml += `
           <div class="cf-summary-narrative">
-            💡 <strong>Algorithmic Decision Shift:</strong> ${narrativeText}
+            💡 <strong>Algorithmic Boundary Shift:</strong> ${narrativeText}
           </div>
         `;
 
@@ -457,6 +458,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Display Content
       loadingState.classList.add('hidden');
       resultContent.classList.remove('hidden');
+      const resultsSection = document.getElementById('resultsSection');
+      if (resultsSection) {
+        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
 
     } catch (err) {
       console.error('Diagnosis & Explain error:', err);
@@ -495,6 +500,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       loadingState.classList.add('hidden');
       resultContent.classList.remove('hidden');
+      const resultsSection = document.getElementById('resultsSection');
+      if (resultsSection) {
+        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
 
     } catch (err) {
       console.error('Quick predict error:', err);
@@ -509,16 +518,34 @@ document.addEventListener('DOMContentLoaded', () => {
   // =====================================================================
   tabClinical.addEventListener('click', () => {
     tabClinical.classList.add('active');
+    if (navXai) navXai.classList.remove('active');
     tabAdmin.classList.remove('active');
     clinicalView.classList.remove('hidden');
     adminView.classList.add('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+
+  if (navXai) {
+    navXai.addEventListener('click', () => {
+      tabClinical.classList.remove('active');
+      navXai.classList.add('active');
+      tabAdmin.classList.remove('active');
+      clinicalView.classList.remove('hidden');
+      adminView.classList.add('hidden');
+      const target = document.getElementById('xaiContainer') || document.getElementById('resultsSection');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  }
 
   tabAdmin.addEventListener('click', () => {
     tabAdmin.classList.add('active');
     tabClinical.classList.remove('active');
+    if (navXai) navXai.classList.remove('active');
     adminView.classList.remove('hidden');
     clinicalView.classList.add('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Automatically inspect current dataset if not loaded yet
     if (statRows.textContent === '--') {
@@ -735,23 +762,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let barsHtml = '';
     metricsToDisplay.forEach(m => {
       barsHtml += `
-        <div class="bar-metric-row">
-          <div class="bar-metric-name">${m.name}</div>
-          <div class="bar-dual-track">
-            <div class="bar-row">
-              <span class="bar-tag">Log. Regression</span>
-              <div class="bar-track">
-                <div class="bar-fill lr" style="width: ${m.lrVal}%;"></div>
-              </div>
-              <span class="bar-num">${m.lrVal}%</span>
-            </div>
-            <div class="bar-row">
-              <span class="bar-tag">Random Forest</span>
-              <div class="bar-track">
-                <div class="bar-fill rf" style="width: ${m.rfVal}%;"></div>
-              </div>
-              <span class="bar-num">${m.rfVal}%</span>
-            </div>
+        <div class="comp-metric-row">
+          <div class="comp-metric-label-row">
+            <span><strong>${m.name}</strong></span>
+            <span>LR: ${m.lrVal}% vs <strong style="color: var(--primary);">RF: ${m.rfVal}%</strong></span>
+          </div>
+          <div class="comp-bar-pair">
+            <div class="comp-bar lr-bar" style="width: ${Math.max(12, m.lrVal)}%;">Log. Regression: ${m.lrVal}%</div>
+            <div class="comp-bar rf-bar" style="width: ${Math.max(12, m.rfVal)}%;">Random Forest: ${m.rfVal}%</div>
           </div>
         </div>
       `;

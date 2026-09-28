@@ -3,146 +3,281 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thyroid Disease Diagnosis & Counterfactual XAI</title>
+  <title>ThyroCare XAI — AI-Powered Thyroid Disease Diagnosis & Explainable AI</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Top Navigation & System Health Bar -->
+  <!-- =====================================================================
+       1. TOP NAVIGATION (Fixed & Clean Medical SaaS Header)
+       ===================================================================== -->
   <header class="app-header">
     <div class="header-container">
+      <!-- Brand Logo & Identity -->
       <div class="brand">
         <div class="brand-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
           </svg>
         </div>
-        <div>
-          <h1 class="brand-title">ThyroCare XAI</h1>
-          <p class="brand-subtitle">Enhancing Thyroid Disease Diagnosis with Machine Learning & Counterfactual Explainable AI</p>
+        <div class="brand-text">
+          <div class="brand-title-wrap">
+            <h1 class="brand-title">ThyroCare <span class="brand-highlight">XAI</span></h1>
+            <span class="brand-version">v2.0</span>
+          </div>
+          <p class="brand-subtitle">AI-Powered Thyroid Disease Diagnosis & Counterfactual XAI</p>
         </div>
       </div>
+
+      <!-- Center Navigation Links -->
+      <nav class="nav-links">
+        <button type="button" class="nav-link-btn active" id="tabClinical">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+          Clinical Diagnosis
+        </button>
+        <button type="button" class="nav-link-btn" id="navXai">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          Counterfactual XAI
+        </button>
+        <button type="button" class="nav-link-btn" id="tabAdmin">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Admin Dashboard
+        </button>
+      </nav>
+
+      <!-- Right Header Actions -->
       <div class="header-actions">
-        <div class="system-status" id="systemStatus">
+        <div class="system-status-pill" id="systemStatus">
           <span class="status-dot pulse"></span>
-          <span id="statusText">Connecting to API...</span>
+          <span id="statusText">Connecting...</span>
         </div>
-        <button type="button" class="btn-api-config" id="btnApiConfig" title="Configure Backend API URL">
-          ⚙️ API Config
+        <button type="button" class="btn-api-config" id="btnApiConfig" title="Configure Backend API Endpoint">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          API Config
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Model Performance Banner -->
-  <div class="metrics-strip">
-    <div class="metrics-container">
-      <div class="metric-pill">
-        <span class="metric-label">Production Model:</span>
-        <span class="metric-val" id="metaModel">Random Forest</span>
+  <!-- =====================================================================
+       2. HERO SECTION & BENCHMARK METRICS
+       ===================================================================== -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>DiCE XAI Enabled</span>
+        </div>
+        <h2 class="hero-title">AI-Powered Thyroid Disease Diagnosis</h2>
+        <p class="hero-subtitle">Machine Learning + Counterfactual Explainable AI</p>
       </div>
-      <div class="metric-pill">
-        <span class="metric-label">Accuracy:</span>
-        <span class="metric-val highlight" id="metaAccuracy">95.86%</span>
-      </div>
-      <div class="metric-pill">
-        <span class="metric-label">ROC-AUC:</span>
-        <span class="metric-val highlight" id="metaRoc">0.9937</span>
-      </div>
-      <div class="metric-pill">
-        <span class="metric-label">Precision / Recall:</span>
-        <span class="metric-val" id="metaPR">0.88 / 0.97</span>
-      </div>
-      <div class="metric-pill">
-        <span class="metric-label">XAI Engine:</span>
-        <span class="metric-val" id="metaXai">DiCE (Diverse Counterfactuals)</span>
+
+      <!-- 3 Benchmark Metric Cards -->
+      <div class="hero-metrics-grid">
+        <div class="hero-metric-card">
+          <div class="metric-icon-wrap primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div class="metric-details">
+            <span class="metric-heading">Model Engine</span>
+            <strong class="metric-number" id="metaModel">Random Forest</strong>
+            <span class="metric-caption">Production Model (200 Trees)</span>
+          </div>
+        </div>
+
+        <div class="hero-metric-card">
+          <div class="metric-icon-wrap success">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <div class="metric-details">
+            <span class="metric-heading">Test Accuracy</span>
+            <strong class="metric-number highlight-emerald" id="metaAccuracy">95.86%</strong>
+            <span class="metric-caption">Validated on 1,835 cases</span>
+          </div>
+        </div>
+
+        <div class="hero-metric-card">
+          <div class="metric-icon-wrap indigo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 20V10M12 20V4M6 20v-6"/>
+            </svg>
+          </div>
+          <div class="metric-details">
+            <span class="metric-heading">ROC-AUC Score</span>
+            <strong class="metric-number highlight-indigo" id="metaRoc">0.9937</strong>
+            <span class="metric-caption" id="metaPR">Precision 0.88 • Recall 0.97 • F1 0.92</span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Primary View Navigation Tabs -->
-  <nav class="view-tabs-container">
-    <div class="view-tabs">
-      <button type="button" class="tab-btn active" id="tabClinical">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-        </svg>
-        Clinical Diagnosis & Counterfactual XAI
-      </button>
-      <button type="button" class="tab-btn" id="tabAdmin">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"></circle>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-        </svg>
-        Admin Dashboard (ML Pipeline & Evaluation)
-      </button>
-    </div>
-  </nav>
-
+  <!-- =====================================================================
+       MAIN WORKSPACE
+       ===================================================================== -->
   <main class="main-layout">
-    
+
     <!-- =====================================================================
          VIEW 1: CLINICAL DIAGNOSIS & COUNTERFACTUAL XAI
          ===================================================================== -->
     <div id="clinicalView">
-      
-      <!-- Preset Patient Bar -->
-      <section class="preset-section">
-        <div class="preset-header">
-          <span class="preset-title">Quick Demo Presets (Real Test Samples):</span>
-          <span class="preset-hint">Load verified test cases for instant viva presentation</span>
+
+      <!-- 4. DEMO PATIENT PRESET CARDS -->
+      <section class="demo-cases-section">
+        <div class="demo-section-header">
+          <h3 class="section-title">Verified Patient Profiles (1-Click Demo)</h3>
+          <p class="section-subtitle">Load real test samples to immediately observe diagnostic prediction and DiCE counterfactuals</p>
         </div>
-        <div class="preset-buttons">
-          <button type="button" class="btn btn-preset danger" id="btnLoadPositive">
-            <span class="btn-icon">🔴</span> Load Thyroid Disease Case (Patient A)
-          </button>
-          <button type="button" class="btn btn-preset success" id="btnLoadNegative">
-            <span class="btn-icon">🟢</span> Load Normal / Euthyroid Case (Patient B)
-          </button>
-          <button type="button" class="btn btn-secondary" id="btnResetForm">
-            <span class="btn-icon">🔄</span> Clear Form
-          </button>
+
+        <div class="demo-cards-grid">
+          <!-- Patient A: Thyroid Disease -->
+          <div class="demo-card demo-card-disease">
+            <div class="demo-card-top">
+              <span class="demo-badge danger">Thyroid Disease Case</span>
+              <span class="demo-tag">Patient A</span>
+            </div>
+            <div class="demo-card-content">
+              <div class="demo-avatar danger">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="8.5" cy="7" r="4"/>
+                  <line x1="20" y1="8" x2="20" y2="14"/>
+                  <line x1="23" y1="11" x2="17" y2="11"/>
+                </svg>
+              </div>
+              <div class="demo-text">
+                <h4 class="demo-patient-name">Female, 33 Years</h4>
+                <p class="demo-patient-summary">Pathological profile: High Serum TSH (6.60 mIU/L), symptomatic clinical presentation.</p>
+              </div>
+            </div>
+            <div class="demo-markers-row">
+              <span class="demo-chip">TSH: <strong>6.60</strong></span>
+              <span class="demo-chip">T3: <strong>1.90</strong></span>
+              <span class="demo-chip">TT4: <strong>114.0</strong></span>
+              <span class="demo-chip">FTI: <strong>123.0</strong></span>
+            </div>
+            <button type="button" class="btn btn-demo danger" id="btnLoadPositive">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 11 12 14 22 4"/>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+              </svg>
+              Load Case
+            </button>
+          </div>
+
+          <!-- Patient B: Normal / Euthyroid -->
+          <div class="demo-card demo-card-healthy">
+            <div class="demo-card-top">
+              <span class="demo-badge success">Normal / Euthyroid Case</span>
+              <span class="demo-tag">Patient B</span>
+            </div>
+            <div class="demo-card-content">
+              <div class="demo-avatar success">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="8.5" cy="7" r="4"/>
+                  <polyline points="17 11 19 13 23 9"/>
+                </svg>
+              </div>
+              <div class="demo-text">
+                <h4 class="demo-patient-name">Female, 45 Years</h4>
+                <p class="demo-patient-summary">Euthyroid profile: Balanced TSH (1.40 mIU/L), normal thyroid blood markers, no goitre.</p>
+              </div>
+            </div>
+            <div class="demo-markers-row">
+              <span class="demo-chip">TSH: <strong>1.40</strong></span>
+              <span class="demo-chip">T3: <strong>2.10</strong></span>
+              <span class="demo-chip">TT4: <strong>102.0</strong></span>
+              <span class="demo-chip">FTI: <strong>104.0</strong></span>
+            </div>
+            <button type="button" class="btn btn-demo success" id="btnLoadNegative">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 11 12 14 22 4"/>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+              </svg>
+              Load Case
+            </button>
+          </div>
         </div>
       </section>
 
-      <!-- Two-Column Clinical Workspace -->
-      <div class="workspace-grid">
+      <!-- 2-COLUMN CLINICAL WORKSPACE -->
+      <div class="clinical-workspace-grid">
         
-        <!-- Left Column: Patient Clinical Form -->
+        <!-- =====================================================================
+             3. PATIENT CLINICAL PROFILE FORM (29 Features in Organized Sections)
+             ===================================================================== -->
         <section class="card form-card">
           <div class="card-header">
-            <div class="card-title-group">
-              <h2 class="card-title">Patient Clinical Profile</h2>
-              <p class="card-subtitle">Enter clinical laboratory markers and medical history (29 features)</p>
+            <div class="card-title-wrap">
+              <div class="card-icon-pill">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10 9 9 9 8 9"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="card-title">Patient Clinical Profile</h3>
+                <p class="card-subtitle">Enter clinical laboratory markers and medical history (29 verified features)</p>
+              </div>
             </div>
+            <button type="button" class="btn-clear-ghost" id="btnResetForm" title="Reset all input fields">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                <path d="M3 3v5h5"/>
+              </svg>
+              Clear Form
+            </button>
           </div>
 
           <form id="patientForm" novalidate>
-            
-            <!-- Category 1: Demographics -->
-            <div class="form-category">
-              <h3 class="category-heading">
-                <span class="cat-num">1</span> Demographics & Referral
-              </h3>
-              <div class="form-row">
-                <div class="form-group col-4">
-                  <label for="age">Age (Years) <span class="req">*</span></label>
+
+            <!-- SECTION A: Demographics & Referral -->
+            <div class="form-section">
+              <div class="form-section-header">
+                <span class="section-pill">A</span>
+                <h4>Demographics & Referral</h4>
+              </div>
+              <div class="form-grid-3">
+                <div class="form-field">
+                  <label for="age">Patient Age (Years) <span class="required">*</span></label>
                   <input type="number" id="age" name="age" min="1" max="110" step="1" value="33" required>
                 </div>
-                <div class="form-group col-4">
-                  <label for="sex">Biological Sex <span class="req">*</span></label>
+                <div class="form-field">
+                  <label for="sex">Biological Sex <span class="required">*</span></label>
                   <select id="sex" name="sex" required>
                     <option value="F">Female (F)</option>
                     <option value="M">Male (M)</option>
                   </select>
                 </div>
-                <div class="form-group col-4">
+                <div class="form-field">
                   <label for="referral_source">Referral Source</label>
                   <select id="referral_source" name="referral_source">
-                    <option value="other">Other</option>
+                    <option value="other">Other / General</option>
                     <option value="SVI">SVI</option>
                     <option value="SVHC">SVHC</option>
                     <option value="STMW">STMW</option>
@@ -153,250 +288,317 @@
               </div>
             </div>
 
-            <!-- Category 2: Laboratory Blood Tests -->
-            <div class="form-category">
-              <h3 class="category-heading">
-                <span class="cat-num">2</span> Laboratory Thyroid Panel (Serum Blood Tests)
-              </h3>
-              <div class="form-row">
-                <div class="form-group col-4">
+            <!-- SECTION B: Thyroid Laboratory Tests -->
+            <div class="form-section">
+              <div class="form-section-header">
+                <span class="section-pill">B</span>
+                <h4>Thyroid Laboratory Tests (Serum Blood Markers)</h4>
+              </div>
+              <div class="form-grid-3">
+                <div class="form-field">
                   <label for="TSH">
                     TSH (mIU/L)
-                    <span class="ref-range">Norm: 0.4 - 4.0</span>
+                    <span class="ref-badge">Norm: 0.4 – 4.0</span>
                   </label>
                   <input type="number" id="TSH" name="TSH" step="0.01" min="0" max="500" value="6.60" placeholder="e.g. 6.6">
                 </div>
-                <div class="form-group col-4">
+                <div class="form-field">
                   <label for="T3">
                     T3 (nmol/L)
-                    <span class="ref-range">Norm: 1.2 - 3.1</span>
+                    <span class="ref-badge">Norm: 1.2 – 3.1</span>
                   </label>
                   <input type="number" id="T3" name="T3" step="0.01" min="0" max="20" value="1.90" placeholder="e.g. 1.9">
                 </div>
-                <div class="form-group col-4">
+                <div class="form-field">
                   <label for="TT4">
                     TT4 (nmol/L)
-                    <span class="ref-range">Norm: 60 - 150</span>
+                    <span class="ref-badge">Norm: 60 – 150</span>
                   </label>
                   <input type="number" id="TT4" name="TT4" step="0.1" min="0" max="600" value="114.0" placeholder="e.g. 114">
                 </div>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group col-4">
+                <div class="form-field">
                   <label for="T4U">
-                    T4U (Ratio)
-                    <span class="ref-range">Norm: 0.7 - 1.2</span>
+                    T4U Ratio
+                    <span class="ref-badge">Norm: 0.7 – 1.2</span>
                   </label>
                   <input type="number" id="T4U" name="T4U" step="0.01" min="0" max="5" value="0.93" placeholder="e.g. 0.93">
                 </div>
-                <div class="form-group col-4">
+                <div class="form-field">
                   <label for="FTI">
-                    FTI (Index)
-                    <span class="ref-range">Norm: 70 - 140</span>
+                    Free Thyroxine Index (FTI)
+                    <span class="ref-badge">Norm: 70 – 140</span>
                   </label>
                   <input type="number" id="FTI" name="FTI" step="0.1" min="0" max="600" value="123.0" placeholder="e.g. 123">
                 </div>
-                <div class="form-group col-4">
+                <div class="form-field">
                   <label for="TBG">
                     TBG (nmol/L)
-                    <span class="ref-range">Norm: 12 - 30</span>
+                    <span class="ref-badge">Norm: 12 – 30</span>
                   </label>
                   <input type="number" id="TBG" name="TBG" step="0.1" min="0" max="300" value="26.0" placeholder="e.g. 26">
                 </div>
               </div>
-
-              <!-- Lab Test Measured Flags -->
-              <div class="sub-category-label">Laboratory Measurement Flags:</div>
-              <div class="checkbox-grid">
-                <label class="check-item">
-                  <input type="checkbox" id="TSH_measured" name="TSH_measured" value="t" checked>
-                  <span>TSH Measured</span>
-                </label>
-                <label class="check-item">
-                  <input type="checkbox" id="T3_measured" name="T3_measured" value="t">
-                  <span>T3 Measured</span>
-                </label>
-                <label class="check-item">
-                  <input type="checkbox" id="TT4_measured" name="TT4_measured" value="t" checked>
-                  <span>TT4 Measured</span>
-                </label>
-                <label class="check-item">
-                  <input type="checkbox" id="T4U_measured" name="T4U_measured" value="t" checked>
-                  <span>T4U Measured</span>
-                </label>
-                <label class="check-item">
-                  <input type="checkbox" id="FTI_measured" name="FTI_measured" value="t" checked>
-                  <span>FTI Measured</span>
-                </label>
-                <label class="check-item">
-                  <input type="checkbox" id="TBG_measured" name="TBG_measured" value="t">
-                  <span>TBG Measured</span>
-                </label>
-              </div>
             </div>
 
-            <!-- Category 3: Clinical Symptoms & History -->
-            <div class="form-category">
-              <h3 class="category-heading">
-                <span class="cat-num">3</span> Clinical Symptoms & Medical History
-              </h3>
-              <div class="checkbox-grid">
-                <label class="check-item">
+            <!-- SECTION C: Medical History (Modern Toggle Cards) -->
+            <div class="form-section">
+              <div class="form-section-header">
+                <span class="section-pill">C</span>
+                <h4>Medical History & Clinical Symptoms</h4>
+              </div>
+              <div class="toggle-cards-grid">
+                <label class="toggle-card">
                   <input type="checkbox" id="on_thyroxine" name="on_thyroxine" value="t">
-                  <span>On Thyroxine</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">On Thyroxine</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="query_on_thyroxine" name="query_on_thyroxine" value="t">
-                  <span>Query on Thyroxine</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">Query on Thyroxine</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="on_antithyroid_medication" name="on_antithyroid_medication" value="t">
-                  <span>On Antithyroid Meds</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">On Antithyroid Meds</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="sick" name="sick" value="t">
-                  <span>Clinically Sick</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">Clinically Sick</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="pregnant" name="pregnant" value="t">
-                  <span>Pregnant</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">Pregnant</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="thyroid_surgery" name="thyroid_surgery" value="t">
-                  <span>Prior Thyroid Surgery</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">Prior Thyroid Surgery</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="I131_treatment" name="I131_treatment" value="t">
-                  <span>I131 Radiotherapy</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">I131 Radiotherapy</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="query_hypothyroid" name="query_hypothyroid" value="t">
-                  <span>Query Hypothyroid</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">Query Hypothyroid</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="query_hyperthyroid" name="query_hyperthyroid" value="t">
-                  <span>Query Hyperthyroid</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">Query Hyperthyroid</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="lithium" name="lithium" value="t">
-                  <span>Lithium Therapy</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">Lithium Therapy</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="goitre" name="goitre" value="t">
-                  <span>Goitre Present</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">Goitre Present</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="tumor" name="tumor" value="t">
-                  <span>Tumor Present</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">Tumor Present</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="hypopituitary" name="hypopituitary" value="t">
-                  <span>Hypopituitary Condition</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">Hypopituitary</span>
                 </label>
-                <label class="check-item">
+                <label class="toggle-card">
                   <input type="checkbox" id="psych" name="psych" value="t">
-                  <span>Psychiatric Symptoms</span>
+                  <span class="toggle-indicator"></span>
+                  <span class="toggle-text">Psychiatric Symptoms</span>
                 </label>
               </div>
             </div>
 
-            <!-- Form Actions -->
-            <div class="form-actions">
-              <button type="submit" class="btn btn-primary" id="btnDiagnoseAndExplain">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="16" x2="12" y2="12"></line>
-                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            <!-- SECTION D: Test Availability -->
+            <div class="form-section compact">
+              <div class="form-section-header">
+                <span class="section-pill">D</span>
+                <h4>Laboratory Test Availability (Measurement Flags)</h4>
+              </div>
+              <div class="availability-chips-grid">
+                <label class="avail-chip">
+                  <input type="checkbox" id="TSH_measured" name="TSH_measured" value="t" checked>
+                  <span class="chip-label">TSH Measured</span>
+                </label>
+                <label class="avail-chip">
+                  <input type="checkbox" id="T3_measured" name="T3_measured" value="t">
+                  <span class="chip-label">T3 Measured</span>
+                </label>
+                <label class="avail-chip">
+                  <input type="checkbox" id="TT4_measured" name="TT4_measured" value="t" checked>
+                  <span class="chip-label">TT4 Measured</span>
+                </label>
+                <label class="avail-chip">
+                  <input type="checkbox" id="T4U_measured" name="T4U_measured" value="t" checked>
+                  <span class="chip-label">T4U Measured</span>
+                </label>
+                <label class="avail-chip">
+                  <input type="checkbox" id="FTI_measured" name="FTI_measured" value="t" checked>
+                  <span class="chip-label">FTI Measured</span>
+                </label>
+                <label class="avail-chip">
+                  <input type="checkbox" id="TBG_measured" name="TBG_measured" value="t">
+                  <span class="chip-label">TBG Measured</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 5. ACTION AREA -->
+            <div class="form-action-area">
+              <button type="button" class="btn btn-primary btn-analyze" id="btnQuickPredict">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
                 </svg>
-                Diagnose & Generate Counterfactual XAI
+                Analyze Patient
               </button>
-              <button type="button" class="btn btn-outline" id="btnQuickPredict">
-                Quick Diagnosis Only
+              <button type="submit" class="btn btn-secondary btn-explain" id="btnDiagnoseAndExplain">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                Generate Counterfactual Explanation
               </button>
             </div>
+
           </form>
         </section>
 
-        <!-- Right Column: Results & Explainable AI -->
+        <!-- =====================================================================
+             6 & 7. RIGHT COLUMN: PREDICTION RESULT & COUNTERFACTUAL XAI
+             ===================================================================== -->
         <section class="card results-card" id="resultsSection">
           
-          <!-- Placeholder when no prediction run yet -->
+          <!-- Empty State (Before Analysis) -->
           <div class="empty-state" id="emptyState">
-            <div class="empty-icon">🩺</div>
-            <h3>Ready for Evaluation</h3>
-            <p>Select a preset patient or enter clinical markers on the left, then click <strong>"Diagnose & Generate Counterfactual XAI"</strong>.</p>
+            <div class="empty-illustration">
+              <div class="empty-pulse-ring"></div>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+              </svg>
+            </div>
+            <h3 class="empty-heading">Ready for Diagnostic Analysis</h3>
+            <p class="empty-text">Select Patient A or Patient B above, or customize the clinical profile on the left. Then click <strong>"Analyze Patient"</strong> or <strong>"Generate Counterfactual Explanation"</strong>.</p>
           </div>
 
-          <!-- Loading Spinner -->
+          <!-- Loading State -->
           <div class="loading-state hidden" id="loadingState">
-            <div class="spinner"></div>
-            <h3 id="loadingTitle">Running Random Forest Model...</h3>
-            <p id="loadingMsg">Calculating prediction probabilities and running DiCE counterfactual search...</p>
+            <div class="medical-spinner"></div>
+            <h4 class="loading-title" id="loadingTitle">Evaluating Patient Profile...</h4>
+            <p class="loading-subtitle" id="loadingMsg">Random Forest evaluating 29 features & DiCE computing counterfactual boundary shifts...</p>
           </div>
 
           <!-- Result Content Container -->
           <div class="result-content hidden" id="resultContent">
             
-            <!-- Diagnostic Outcome Header Card -->
+            <!-- 6. PREDICTION RESULT CARD -->
             <div class="outcome-card" id="outcomeCard">
-              <div class="outcome-badge-container">
-                <span class="outcome-badge" id="outcomeBadge">--</span>
-              </div>
-              
-              <div class="confidence-container">
-                <div class="confidence-header">
-                  <span class="conf-label">Model Diagnostic Confidence:</span>
-                  <span class="conf-val" id="confidenceValue">--%</span>
+              <div class="outcome-header-row">
+                <div class="outcome-tag-group">
+                  <span class="outcome-kicker">AI DIAGNOSIS</span>
+                  <span class="outcome-model-tag">Random Forest Classifier • 95.86% Accuracy</span>
                 </div>
-                <div class="progress-bar-bg">
-                  <div class="progress-bar-fill" id="confidenceBar" style="width: 0%;"></div>
+                <div class="outcome-badge-wrap">
+                  <span class="outcome-badge" id="outcomeBadge">--</span>
                 </div>
               </div>
 
-              <!-- Probability Breakdown -->
-              <div class="proba-breakdown">
-                <div class="proba-item healthy">
-                  <span class="proba-name">Normal (Class 0):</span>
-                  <span class="proba-pct" id="probHealthy">--%</span>
+              <!-- Confidence Progress Gauge -->
+              <div class="confidence-gauge-box">
+                <div class="confidence-labels">
+                  <span class="conf-title">Model Confidence</span>
+                  <strong class="conf-percent" id="confidenceValue">--%</strong>
                 </div>
-                <div class="proba-item disease">
-                  <span class="proba-name">Thyroid Disease (Class 1):</span>
-                  <span class="proba-pct" id="probDisease">--%</span>
+                <div class="gauge-track">
+                  <div class="gauge-fill" id="confidenceBar" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <!-- Probability Split Cards -->
+              <div class="probability-split-grid">
+                <div class="prob-card prob-healthy">
+                  <div class="prob-header">
+                    <span class="prob-dot healthy"></span>
+                    <span class="prob-label">Normal Probability</span>
+                  </div>
+                  <strong class="prob-val" id="probHealthy">--%</strong>
+                </div>
+                <div class="prob-card prob-disease">
+                  <div class="prob-header">
+                    <span class="prob-dot disease"></span>
+                    <span class="prob-label">Disease Probability</span>
+                  </div>
+                  <strong class="prob-val" id="probDisease">--%</strong>
                 </div>
               </div>
             </div>
 
-            <!-- Counterfactual XAI Explanation Section -->
+            <!-- 7. COUNTERFACTUAL XAI CARD -->
             <div class="xai-container" id="xaiContainer">
-              <div class="xai-header">
-                <div class="xai-title-row">
-                  <span class="xai-icon">💡</span>
-                  <h3 class="xai-title">Counterfactual Explainable AI (DiCE)</h3>
+              <div class="xai-card-header">
+                <div class="xai-title-wrap">
+                  <div class="xai-badge">DiCE Counterfactual XAI</div>
+                  <h3 class="xai-title">Why did the model make this prediction?</h3>
+                  <p class="xai-subtitle" id="xaiSubtitle">
+                    Counterfactual Explainable AI powered by DiCE
+                  </p>
                 </div>
-                <span class="xai-subtitle" id="xaiSubtitle">
-                  What minimal changes in the patient's markers would alter the diagnosis?
-                </span>
+              </div>
+
+              <!-- Decision Shift Flow Diagram -->
+              <div class="xai-flow-diagram">
+                <div class="flow-step">
+                  <div class="flow-icon-circle">👤</div>
+                  <span class="flow-label">Original Patient</span>
+                  <span class="flow-subtext">Current markers</span>
+                </div>
+                <div class="flow-arrow">➔</div>
+                <div class="flow-step">
+                  <div class="flow-icon-circle">⚖️</div>
+                  <span class="flow-label">Changed Features</span>
+                  <span class="flow-subtext">Minimal delta</span>
+                </div>
+                <div class="flow-arrow">➔</div>
+                <div class="flow-step">
+                  <div class="flow-icon-circle">🧬</div>
+                  <span class="flow-label">Counterfactual</span>
+                  <span class="flow-subtext">Alternative profile</span>
+                </div>
+                <div class="flow-arrow">➔</div>
+                <div class="flow-step">
+                  <div class="flow-icon-circle">🔄</div>
+                  <span class="flow-label">Changed Prediction</span>
+                  <span class="flow-subtext">Decision flip</span>
+                </div>
               </div>
 
               <!-- Mandatory Legal & Medical Disclaimer -->
-              <div class="disclaimer-box">
-                <div class="disclaimer-header">
+              <div class="xai-disclaimer-box">
+                <div class="disclaimer-icon-wrap">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                     <line x1="12" y1="9" x2="12" y2="13"/>
                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                   </svg>
-                  <strong>Scientific Model Explanation Disclaimer</strong>
                 </div>
-                <p class="disclaimer-text">
-                  Counterfactual explanations demonstrate the mathematical sensitivity and decision boundary of the trained Random Forest algorithm. 
-                  They represent <strong>computational model explanations</strong> and <strong>MUST NOT</strong> be interpreted as clinical treatment advice or medical prescriptions.
-                </p>
+                <div class="disclaimer-text-wrap">
+                  <strong>Decision-Boundary Scientific Disclaimer:</strong>
+                  <p>Counterfactual explanations represent model decision-boundary changes and are not clinical treatment recommendations.</p>
+                </div>
               </div>
 
-              <!-- Counterfactual Examples Render Target -->
-              <div id="cfListContainer"></div>
+              <!-- Dynamic Target for Generated Counterfactual Cards -->
+              <div id="cfListContainer" class="cf-list-grid"></div>
 
             </div>
 
@@ -408,37 +610,42 @@
     </div>
 
     <!-- =====================================================================
-         VIEW 2: ADMIN DASHBOARD (ML PIPELINE & EVALUATION)
+         8. VIEW 2: ADMIN DASHBOARD (ML PIPELINE & EVALUATION)
          ===================================================================== -->
     <div id="adminView" class="hidden">
       
+      <div class="admin-header-strip">
+        <div>
+          <h2 class="admin-main-title">Machine Learning Pipeline & Evaluation</h2>
+          <p class="admin-main-subtitle">Manage datasets, run preprocessing pipelines, train algorithms in experimental memory, and inspect comparative performance.</p>
+        </div>
+      </div>
+
       <div class="admin-grid">
         
         <!-- Module 1: Upload Dataset -->
-        <section class="card admin-card">
-          <div class="card-header">
-            <div class="card-title-group">
-              <span class="module-tag">Module 1</span>
-              <h2 class="card-title">Upload & Inspect Dataset</h2>
-              <p class="card-subtitle">Inspect the active dataset or upload a new CSV file for processing</p>
-            </div>
+        <section class="card admin-module-card">
+          <div class="module-card-header">
+            <span class="module-num-tag">Module 1</span>
+            <h3 class="module-card-title">Upload & Inspect Dataset</h3>
+            <p class="module-card-subtitle">Inspect active cleaned dataset (9,172 records) or load a new CSV</p>
           </div>
 
-          <div class="admin-content">
-            <div class="file-upload-box">
+          <div class="module-card-body">
+            <div class="file-upload-dropzone">
               <input type="file" id="datasetFileInput" accept=".csv" class="hidden">
-              <label for="datasetFileInput" class="upload-dropzone">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="17 8 12 3 7 8"></polyline>
-                  <line x1="12" y1="3" x2="12" y2="15"></line>
+              <label for="datasetFileInput" class="upload-drop-content">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
                 </svg>
                 <span id="uploadLabelText">Click or Drag & Drop CSV Dataset</span>
                 <span class="upload-hint">Supports standard Thyroid dataset format (29 features + target)</span>
               </label>
             </div>
 
-            <div class="btn-group">
+            <div class="module-actions-row">
               <button type="button" class="btn btn-primary" id="btnUploadDataset">
                 Upload & Inspect File
               </button>
@@ -448,102 +655,102 @@
             </div>
 
             <!-- Dataset Stats Display -->
-            <div class="stats-grid hidden" id="datasetStatsGrid">
-              <div class="stat-box">
-                <span class="stat-label">Active Source</span>
-                <span class="stat-val highlight-small" id="statSource">--</span>
+            <div class="admin-stats-grid hidden" id="datasetStatsGrid">
+              <div class="admin-stat-item">
+                <span class="stat-name">Active Source</span>
+                <strong class="stat-figure" id="statSource">--</strong>
               </div>
-              <div class="stat-box">
-                <span class="stat-label">Total Records</span>
-                <span class="stat-val" id="statRows">--</span>
+              <div class="admin-stat-item">
+                <span class="stat-name">Total Records</span>
+                <strong class="stat-figure" id="statRows">--</strong>
               </div>
-              <div class="stat-box">
-                <span class="stat-label">Total Columns</span>
-                <span class="stat-val" id="statCols">--</span>
+              <div class="admin-stat-item">
+                <span class="stat-name">Total Columns</span>
+                <strong class="stat-figure" id="statCols">--</strong>
               </div>
-              <div class="stat-box">
-                <span class="stat-label">Class Distribution</span>
-                <span class="stat-val" id="statDist">--</span>
+              <div class="admin-stat-item">
+                <span class="stat-name">Class Distribution</span>
+                <strong class="stat-figure" id="statDist">--</strong>
               </div>
             </div>
 
             <!-- Table Preview -->
-            <div class="preview-container hidden" id="previewContainer">
+            <div class="preview-box hidden" id="previewContainer">
               <div class="preview-header">
                 <strong>Dataset Preview (First 5 Rows):</strong>
               </div>
-              <div class="table-scroll" id="datasetPreviewTable"></div>
+              <div class="table-scroll-wrap" id="datasetPreviewTable"></div>
             </div>
           </div>
         </section>
 
         <!-- Module 2: Preprocess Dataset -->
-        <section class="card admin-card">
-          <div class="card-header">
-            <div class="card-title-group">
-              <span class="module-tag">Module 2</span>
-              <h2 class="card-title">Preprocess Dataset</h2>
-              <p class="card-subtitle">Execute imputation, scaling, one-hot encoding, and stratified split</p>
-            </div>
+        <section class="card admin-module-card">
+          <div class="module-card-header">
+            <span class="module-num-tag">Module 2</span>
+            <h3 class="module-card-title">Preprocess Dataset</h3>
+            <p class="module-card-subtitle">Execute imputation, scaling, one-hot encoding, and 80/20 stratified split</p>
           </div>
 
-          <div class="admin-content">
-            <div class="pipeline-flow">
-              <div class="pipeline-step">
-                <div class="step-badge">Step 1</div>
-                <div class="step-desc">
+          <div class="module-card-body">
+            <div class="pipeline-steps-list">
+              <div class="pipeline-step-item">
+                <div class="step-circle">1</div>
+                <div class="step-info">
                   <strong>Missing Value Imputation</strong>
-                  <span>Median for numeric blood markers, Mode for categorical symptoms</span>
+                  <span>Median for blood markers, Mode for categorical history</span>
                 </div>
               </div>
-              <div class="pipeline-step">
-                <div class="step-badge">Step 2</div>
-                <div class="step-desc">
+              <div class="pipeline-step-item">
+                <div class="step-circle">2</div>
+                <div class="step-info">
                   <strong>Standard Scaling</strong>
-                  <span>Z-Score Normalization for continuous features (TSH, T3, TT4, FTI, etc.)</span>
+                  <span>Z-Score Normalization for numerical blood tests</span>
                 </div>
               </div>
-              <div class="pipeline-step">
-                <div class="step-badge">Step 3</div>
-                <div class="step-desc">
+              <div class="pipeline-step-item">
+                <div class="step-circle">3</div>
+                <div class="step-info">
                   <strong>Categorical Encoding</strong>
-                  <span>One-Hot Encoding with handle_unknown='ignore' (22 features $\rightarrow$ 48 binary cols)</span>
+                  <span>One-Hot Encoding with handle_unknown='ignore' (29 $\rightarrow$ 55 cols)</span>
                 </div>
               </div>
-              <div class="pipeline-step">
-                <div class="step-badge">Step 4</div>
-                <div class="step-desc">
-                  <strong>Stratified 80/20 Train-Test Split</strong>
-                  <span>Preserving class ratio (80% Train: 7,337 | 20% Test: 1,835)</span>
+              <div class="pipeline-step-item">
+                <div class="step-circle">4</div>
+                <div class="step-info">
+                  <strong>Stratified 80/20 Split</strong>
+                  <span>Train: 7,337 samples • Test: 1,835 samples</span>
                 </div>
               </div>
             </div>
 
-            <button type="button" class="btn btn-primary" id="btnRunPreprocess">
-              Execute Preprocessing Pipeline
-            </button>
+            <div class="module-actions-row">
+              <button type="button" class="btn btn-primary" id="btnRunPreprocess">
+                Execute Preprocessing Pipeline
+              </button>
+            </div>
 
             <!-- Preprocessing Results -->
-            <div class="prep-results hidden" id="prepResults">
-              <div class="prep-stats-grid">
-                <div class="prep-pill">
-                  <span class="prep-label">Input Raw Features:</span>
+            <div class="prep-results-box hidden" id="prepResults">
+              <div class="prep-metrics-grid">
+                <div class="prep-metric-item">
+                  <span>Input Features</span>
                   <strong id="prepRawCount">29</strong>
                 </div>
-                <div class="prep-pill">
-                  <span class="prep-label">Transformed Features:</span>
-                  <strong class="highlight-text" id="prepTransCount">55</strong>
+                <div class="prep-metric-item">
+                  <span>Transformed Features</span>
+                  <strong class="highlight-blue" id="prepTransCount">55</strong>
                 </div>
-                <div class="prep-pill">
-                  <span class="prep-label">Training Records:</span>
+                <div class="prep-metric-item">
+                  <span>Training Records</span>
                   <strong id="prepTrainCount">7,337</strong>
                 </div>
-                <div class="prep-pill">
-                  <span class="prep-label">Testing Records:</span>
+                <div class="prep-metric-item">
+                  <span>Testing Records</span>
                   <strong id="prepTestCount">1,835</strong>
                 </div>
               </div>
-              <div class="prep-msg" id="prepSuccessMsg">
+              <div class="prep-success-alert" id="prepSuccessMsg">
                 ✅ Preprocessing pipeline executed successfully. Feature matrix ready for algorithm training.
               </div>
             </div>
@@ -551,71 +758,78 @@
         </section>
 
         <!-- Module 3: Apply Algorithm -->
-        <section class="card admin-card">
-          <div class="card-header">
-            <div class="card-title-group">
-              <span class="module-tag">Module 3</span>
-              <h2 class="card-title">Apply Algorithm & Calculate Metrics</h2>
-              <p class="card-subtitle">Train and evaluate Logistic Regression or Random Forest in experimental memory</p>
-            </div>
+        <section class="card admin-module-card">
+          <div class="module-card-header">
+            <span class="module-num-tag">Module 3</span>
+            <h3 class="module-card-title">Apply Algorithm & Calculate Metrics</h3>
+            <p class="module-card-subtitle">Train and evaluate algorithms in experimental memory with zero risk to verified models</p>
           </div>
 
-          <div class="admin-content">
-            <div class="algo-selection-box">
-              <label class="algo-option">
+          <div class="module-card-body">
+            <div class="algo-choice-grid">
+              <label class="algo-choice-card">
                 <input type="radio" name="adminAlgo" value="random_forest" checked>
-                <div class="algo-card-radio">
-                  <strong>Random Forest Classifier</strong>
-                  <span>Ensemble of 200 trees • Non-linear splits</span>
+                <div class="algo-choice-inner">
+                  <div class="algo-title-wrap">
+                    <strong>Random Forest Classifier</strong>
+                    <span class="algo-pill primary">Ensemble</span>
+                  </div>
+                  <p class="algo-desc">200 decision trees • Non-linear splits • Optimized for imbalanced medical data</p>
                 </div>
               </label>
-              <label class="algo-option">
+
+              <label class="algo-choice-card">
                 <input type="radio" name="adminAlgo" value="logistic_regression">
-                <div class="algo-card-radio">
-                  <strong>Logistic Regression</strong>
-                  <span>Linear decision boundary • Balanced class weights</span>
+                <div class="algo-choice-inner">
+                  <div class="algo-title-wrap">
+                    <strong>Logistic Regression</strong>
+                    <span class="algo-pill secondary">Baseline</span>
+                  </div>
+                  <p class="algo-desc">Linear decision boundary • Balanced class weights • L2 regularization</p>
                 </div>
               </label>
             </div>
 
-            <div class="safety-banner">
-              🛡️ <strong>Safety Guarantee:</strong> Training executes in experimental memory to calculate real test metrics. Verified production model files in <code>model/</code> are strictly preserved.
+            <div class="safety-guarantee-note">
+              🛡️ <strong>Safety Guarantee:</strong> Training executes in experimental memory to calculate real test metrics. Verified production model files in <code>model/</code> remain strictly preserved.
             </div>
 
-            <button type="button" class="btn btn-primary" id="btnTrainModel">
-              Train Model & Calculate Metrics
-            </button>
+            <div class="module-actions-row">
+              <button type="button" class="btn btn-primary" id="btnTrainModel">
+                Train Model & Calculate Metrics
+              </button>
+            </div>
 
-            <!-- Real Training Evaluation Output -->
-            <div class="training-output hidden" id="trainingOutput">
-              <div class="algo-name-banner" id="evalAlgoName">Random Forest Classifier</div>
+            <!-- Training Output -->
+            <div class="training-output-box hidden" id="trainingOutput">
+              <div class="trained-algo-badge" id="evalAlgoName">Random Forest Classifier</div>
               
-              <div class="eval-metrics-grid">
-                <div class="eval-box">
+              <div class="evaluation-metrics-grid">
+                <div class="eval-metric-card">
                   <span class="eval-label">Accuracy</span>
-                  <span class="eval-val" id="evalAcc">--%</span>
+                  <strong class="eval-num highlight-emerald" id="evalAcc">--%</strong>
                 </div>
-                <div class="eval-box">
+                <div class="eval-metric-card">
                   <span class="eval-label">ROC-AUC</span>
-                  <span class="eval-val highlight" id="evalRoc">--</span>
+                  <strong class="eval-num highlight-indigo" id="evalRoc">--</strong>
                 </div>
-                <div class="eval-box">
+                <div class="eval-metric-card">
                   <span class="eval-label">Precision</span>
-                  <span class="eval-val" id="evalPrec">--%</span>
+                  <strong class="eval-num" id="evalPrec">--%</strong>
                 </div>
-                <div class="eval-box">
+                <div class="eval-metric-card">
                   <span class="eval-label">Recall</span>
-                  <span class="eval-val" id="evalRec">--%</span>
+                  <strong class="eval-num" id="evalRec">--%</strong>
                 </div>
-                <div class="eval-box">
+                <div class="eval-metric-card">
                   <span class="eval-label">F1-Score</span>
-                  <span class="eval-val" id="evalF1">--%</span>
+                  <strong class="eval-num" id="evalF1">--%</strong>
                 </div>
               </div>
 
-              <!-- Confusion Matrix Display -->
-              <div class="cm-section">
-                <div class="cm-title">Confusion Matrix (1,835 Test Samples):</div>
+              <!-- Confusion Matrix -->
+              <div class="cm-wrap">
+                <h5 class="cm-heading">Confusion Matrix (1,835 Test Samples):</h5>
                 <table class="cm-table">
                   <thead>
                     <tr>
@@ -627,13 +841,13 @@
                   <tbody>
                     <tr>
                       <th>Actual Normal (0)</th>
-                      <td class="cm-cell correct" id="cmTN">--</td>
-                      <td class="cm-cell error" id="cmFP">--</td>
+                      <td class="cm-val correct" id="cmTN">--</td>
+                      <td class="cm-val error" id="cmFP">--</td>
                     </tr>
                     <tr>
                       <th>Actual Disease (1)</th>
-                      <td class="cm-cell error" id="cmFN">--</td>
-                      <td class="cm-cell correct" id="cmTP">--</td>
+                      <td class="cm-val error" id="cmFN">--</td>
+                      <td class="cm-val correct" id="cmTP">--</td>
                     </tr>
                   </tbody>
                 </table>
@@ -643,33 +857,31 @@
         </section>
 
         <!-- Module 4: View Algorithm Comparison Graph -->
-        <section class="card admin-card full-width">
-          <div class="card-header">
-            <div class="card-title-group">
-              <span class="module-tag">Module 4</span>
-              <h2 class="card-title">View Algorithm Comparison Graph</h2>
-              <p class="card-subtitle">Real calculated metric comparison: Logistic Regression (Baseline) vs Random Forest (Final)</p>
-            </div>
+        <section class="card admin-module-card full-width">
+          <div class="module-card-header">
+            <span class="module-num-tag">Module 4</span>
+            <h3 class="module-card-title">View Algorithm Comparison Graph</h3>
+            <p class="module-card-subtitle">Real calculated metric comparison: Logistic Regression (Baseline) vs Random Forest (Ensemble)</p>
           </div>
 
-          <div class="admin-content">
-            <div class="comparison-actions">
+          <div class="module-card-body">
+            <div class="module-actions-row">
               <button type="button" class="btn btn-primary" id="btnLoadComparison">
                 Generate / Refresh Comparison Graph
               </button>
             </div>
 
-            <div class="comparison-container hidden" id="comparisonContainer">
+            <div class="comparison-display-wrap hidden" id="comparisonContainer">
               
-              <!-- Interactive CSS Bar Graph -->
-              <div class="chart-wrapper">
-                <div class="chart-legend">
-                  <div class="legend-item">
-                    <span class="legend-color lr-color"></span>
+              <!-- Comparison Bars Chart -->
+              <div class="comparison-chart-card">
+                <div class="chart-legend-row">
+                  <div class="legend-chip">
+                    <span class="legend-color-dot lr-dot"></span>
                     <span>Logistic Regression (Baseline)</span>
                   </div>
-                  <div class="legend-item">
-                    <span class="legend-color rf-color"></span>
+                  <div class="legend-chip">
+                    <span class="legend-color-dot rf-dot"></span>
                     <span>Random Forest (Ensemble)</span>
                   </div>
                 </div>
@@ -679,15 +891,15 @@
                 </div>
               </div>
 
-              <!-- Comparison Table -->
-              <div class="table-container">
+              <!-- Comparison Metrics Table -->
+              <div class="comparison-table-wrap">
                 <table class="comparison-table">
                   <thead>
                     <tr>
                       <th>Evaluation Metric</th>
                       <th>Logistic Regression</th>
                       <th>Random Forest</th>
-                      <th>Difference / Improvement</th>
+                      <th>Algorithmic Delta (Δ)</th>
                     </tr>
                   </thead>
                   <tbody id="comparisonTableBody">
@@ -696,7 +908,7 @@
                 </table>
               </div>
 
-              <!-- Viva Analytical Justification -->
+              <!-- Analytical Conclusion Box -->
               <div class="conclusion-box" id="comparisonConclusion">
                 <!-- Rendered dynamically via JavaScript -->
               </div>
@@ -711,10 +923,21 @@
 
   </main>
 
+  <!-- =====================================================================
+       10. PROFESSIONAL ACADEMIC FOOTER
+       ===================================================================== -->
   <footer class="app-footer">
     <div class="footer-container">
-      <p>Final Year B.Tech Project: <em>Enhancing Thyroid Disease Diagnosis With Machine Learning and Counterfactual Explainable AI</em></p>
-      <p class="footer-sub">Verified Model: Random Forest (95.86% Accuracy, 0.9937 ROC-AUC) • Explainability: Diverse Counterfactual Explanations (DiCE)</p>
+      <div class="footer-brand-row">
+        <div class="footer-brand">
+          <span class="footer-logo">ThyroCare XAI</span>
+          <span class="footer-pill">Machine Learning + Counterfactual Explainable AI</span>
+        </div>
+        <p class="footer-project-tag">Academic Project Demonstration</p>
+      </div>
+      <p class="footer-disclaimer">
+        ⚠️ <strong>Academic Disclaimer:</strong> For academic demonstration only. This application does not provide medical diagnosis or treatment advice. Consult certified endocrinology specialists for real clinical evaluation.
+      </p>
     </div>
   </footer>
 
